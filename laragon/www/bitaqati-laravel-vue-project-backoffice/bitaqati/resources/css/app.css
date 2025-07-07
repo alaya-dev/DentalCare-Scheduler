@@ -1,3 +1,141 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* RTL Support for Arabic */
+[dir="rtl"] {
+    text-align: right;
+}
+
+[dir="rtl"] .text-left {
+    text-align: right;
+}
+
+[dir="rtl"] .text-right {
+    text-align: left;
+}
+
+[dir="rtl"] .ml-auto {
+    margin-left: 0;
+    margin-right: auto;
+}
+
+[dir="rtl"] .mr-auto {
+    margin-right: 0;
+    margin-left: auto;
+}
+
+[dir="rtl"] .pl-4 {
+    padding-left: 0;
+    padding-right: 1rem;
+}
+
+[dir="rtl"] .pr-4 {
+    padding-right: 0;
+    padding-left: 1rem;
+}
+
+[dir="rtl"] .border-l {
+    border-left: none;
+    border-right: 1px solid;
+}
+
+[dir="rtl"] .border-r {
+    border-right: none;
+    border-left: 1px solid;
+}
+
+/* Custom RTL utilities */
+.rtl-flip {
+    transform: scaleX(-1);
+}
+
+[dir="rtl"] .rtl-flip {
+    transform: scaleX(1);
+}
+
+/* Arabic font support */
+[dir="rtl"] {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif, 'Arabic UI Text', 'Arabic UI Display';
+}
+
+/* Sidebar RTL Styles */
+.sidebar-rtl {
+    direction: rtl;
+}
+
+.sidebar-rtl .sidebar-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar-rtl .main-content {
+    flex: 1;
+    padding-right: 16rem; /* 64 * 0.25rem = 16rem */
+    padding-left: 0;
+}
+
+.sidebar-rtl .sidebar {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 16rem; /* 64 * 0.25rem = 16rem */
+    height: 100vh;
+    background: white;
+    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+    z-index: 50;
+}
+
+.sidebar-rtl .top-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 16rem; /* Leave space for sidebar */
+    height: 4rem; /* 16 * 0.25rem = 4rem */
+    background: white;
+    border-bottom: 1px solid #e5e7eb;
+    z-index: 40;
+}
+
+.sidebar-rtl .content-wrapper {
+    padding-top: 4rem; /* Space for top bar */
+}
+
+/* Sidebar positioning fixes */
+.sidebar-right {
+    position: fixed !important;
+    top: 0 !important;
+    right: 0 !important;
+    width: 16rem !important;
+    height: 100vh !important;
+    z-index: 50 !important;
+}
+
+.content-with-sidebar {
+    margin-right: 16rem !important;
+    margin-left: 0 !important;
+}
+
+/* Mobile responsive */
+@media (max-width: 1024px) {
+    .sidebar-rtl .main-content {
+        padding-right: 0;
+    }
+    
+    .sidebar-rtl .top-bar {
+        right: 0;
+    }
+    
+    .sidebar-rtl .sidebar {
+        transform: translateX(100%);
+        transition: transform 0.3s ease-in-out;
+    }
+    
+    .sidebar-rtl .sidebar.open {
+        transform: translateX(0);
+    }
+    
+    .content-with-sidebar {
+        margin-right: 0 !important;
+    }
+}

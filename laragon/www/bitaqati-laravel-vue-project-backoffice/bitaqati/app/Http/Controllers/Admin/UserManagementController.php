@@ -23,12 +23,9 @@ class UserManagementController extends Controller
             $query->where('role', $request->role);
         }
 
-        // Recherche par nom ou email
+        // Recherche par email
         if ($request->has('search') && $request->search !== '') {
-            $query->where(function ($q) use ($request) {
-                $q->where('name', 'like', '%' . $request->search . '%')
-                  ->orWhere('email', 'like', '%' . $request->search . '%');
-            });
+            $query->where('email', 'like', '%' . $request->search . '%');
         }
 
         $users = $query->paginate(10)->withQueryString();
@@ -56,7 +53,6 @@ class UserManagementController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
             'email' => 'required|string|lowercase|email|max:255|unique:users',
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'role' => 'required|in:' . implode(',', User::getRoles()),
@@ -64,11 +60,10 @@ class UserManagementController extends Controller
 
         // Vérifier les permissions
         if ($request->role === User::ROLE_SUPER_ADMIN && !auth()->user()->isSuperAdmin()) {
-            abort(403, 'Seul un Super Admin peut créer un autre Super Admin.');
+            abort(403, __('common.only_super_admin_can_create_super_admin'));
         }
 
         User::create([
-            'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role' => $request->role,
@@ -76,7 +71,7 @@ class UserManagementController extends Controller
         ]);
 
         return redirect()->route('admin.users.index')
-            ->with('success', 'Utilisateur créé avec succès.');
+            ->with('success', __('common.user_created_successfully'));
     }
 
     /**
@@ -86,7 +81,7 @@ class UserManagementController extends Controller
     {
         // Vérifier les permissions
         if ($user->isSuperAdmin() && !auth()->user()->isSuperAdmin()) {
-            abort(403, 'Seul un Super Admin peut modifier un autre Super Admin.');
+            abort(403, __('common.only_super_admin_can_edit_super_admin'));
         }
 
         return Inertia::render('Admin/Users/Edit', [
@@ -102,11 +97,10 @@ class UserManagementController extends Controller
     {
         // Vérifier les permissions
         if ($user->isSuperAdmin() && !auth()->user()->isSuperAdmin()) {
-            abort(403, 'Seul un Super Admin peut modifier un autre Super Admin.');
+            abort(403, __('common.only_super_admin_can_edit_super_admin'));
         }
 
         $request->validate([
-            'name' => 'required|string|max:255',
             'email' => 'required|string|lowercase|email|max:255|unique:users,email,' . $user->id,
             'password' => ['nullable', 'confirmed', Rules\Password::defaults()],
             'role' => 'required|in:' . implode(',', User::getRoles()),
@@ -114,11 +108,10 @@ class UserManagementController extends Controller
 
         // Vérifier les permissions pour le changement de rôle
         if ($request->role === User::ROLE_SUPER_ADMIN && !auth()->user()->isSuperAdmin()) {
-            abort(403, 'Seul un Super Admin peut attribuer le rôle Super Admin.');
+            abort(403, __('common.only_super_admin_can_assign_super_admin_role'));
         }
 
         $data = [
-            'name' => $request->name,
             'email' => $request->email,
             'role' => $request->role,
         ];
@@ -130,7 +123,7 @@ class UserManagementController extends Controller
         $user->update($data);
 
         return redirect()->route('admin.users.index')
-            ->with('success', 'Utilisateur mis à jour avec succès.');
+            ->with('success', __('common.user_updated_successfully'));
     }
 
     /**
@@ -140,17 +133,17 @@ class UserManagementController extends Controller
     {
         // Vérifier les permissions
         if ($user->isSuperAdmin() && !auth()->user()->isSuperAdmin()) {
-            abort(403, 'Seul un Super Admin peut supprimer un autre Super Admin.');
+            abort(403, __('common.only_super_admin_can_delete_super_admin'));
         }
 
         // Empêcher la suppression de son propre compte
         if ($user->id === auth()->id()) {
-            abort(403, 'Vous ne pouvez pas supprimer votre propre compte.');
+            abort(403, __('common.cannot_delete_own_account'));
         }
 
         $user->delete();
 
         return redirect()->route('admin.users.index')
-            ->with('success', 'Utilisateur supprimé avec succès.');
+            ->with('success', __('common.user_deleted_successfully'));
     }
 }

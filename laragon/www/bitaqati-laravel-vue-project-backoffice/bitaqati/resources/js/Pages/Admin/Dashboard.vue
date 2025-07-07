@@ -1,18 +1,25 @@
 <template>
-    <Head title="Tableau de bord - Administration" />
+    <Head :title="__('common.dashboard') + ' - ' + __('common.admin')" />
 
-    <AdminLayout>
-        <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">Tableau de bord</h2>
+    <AdminLayoutSidebar>
+        <template #breadcrumb>
+            <span class="text-gray-500">{{ __('common.dashboard') }}</span>
         </template>
 
-        <div class="py-12">
+        <template #header>
+            <div class="text-right">
+                <h2 class="font-semibold text-xl text-gray-800 leading-tight">{{ __('common.dashboard') }}</h2>
+                <p class="mt-1 text-sm text-gray-600">{{ __('common.admin_dashboard_description') }}</p>
+            </div>
+        </template>
+
+        <div class="py-12 bg-gray-50 min-h-screen">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <!-- Statistiques -->
+                <!-- الإحصائيات -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                    <div class="bg-white overflow-hidden shadow-lg sm:rounded-xl border border-gray-100 hover:shadow-xl transition-shadow duration-300">
                         <div class="p-6 text-gray-900">
-                            <div class="flex items-center">
+                            <div class="flex items-center flex-row-reverse">
                                 <div class="flex-shrink-0">
                                     <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
                                         <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -20,17 +27,17 @@
                                         </svg>
                                     </div>
                                 </div>
-                                <div class="ml-4">
-                                    <div class="text-sm font-medium text-gray-500">Total Utilisateurs</div>
+                                <div class="mr-4 text-right">
+                                    <div class="text-sm font-medium text-gray-500">المستخدمين</div>
                                     <div class="text-2xl font-bold text-gray-900">{{ stats.total_users }}</div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                    <div class="bg-white overflow-hidden shadow-lg sm:rounded-xl border border-gray-100 hover:shadow-xl transition-shadow duration-300">
                         <div class="p-6 text-gray-900">
-                            <div class="flex items-center">
+                            <div class="flex items-center flex-row-reverse">
                                 <div class="flex-shrink-0">
                                     <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
                                         <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -38,17 +45,17 @@
                                         </svg>
                                     </div>
                                 </div>
-                                <div class="ml-4">
-                                    <div class="text-sm font-medium text-gray-500">Administrateurs</div>
+                                <div class="mr-4 text-right">
+                                    <div class="text-sm font-medium text-gray-500">المشرفين</div>
                                     <div class="text-2xl font-bold text-gray-900">{{ stats.total_admins }}</div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                    <div class="bg-white overflow-hidden shadow-lg sm:rounded-xl border border-gray-100 hover:shadow-xl transition-shadow duration-300">
                         <div class="p-6 text-gray-900">
-                            <div class="flex items-center">
+                            <div class="flex items-center flex-row-reverse">
                                 <div class="flex-shrink-0">
                                     <div class="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center">
                                         <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -56,8 +63,8 @@
                                         </svg>
                                     </div>
                                 </div>
-                                <div class="ml-4">
-                                    <div class="text-sm font-medium text-gray-500">Clients</div>
+                                <div class="mr-4 text-right">
+                                    <div class="text-sm font-medium text-gray-500">العملاء</div>
                                     <div class="text-2xl font-bold text-gray-900">{{ stats.total_clients }}</div>
                                 </div>
                             </div>
@@ -65,47 +72,41 @@
                     </div>
                 </div>
 
-                <!-- Utilisateurs récents -->
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <!-- المشاريع الحديثة -->
+                <div class="bg-white overflow-hidden shadow-lg sm:rounded-xl border border-gray-100">
                     <div class="p-6">
-                        <div class="flex items-center justify-between mb-4">
-                            <h3 class="text-lg font-medium text-gray-900">Utilisateurs récents</h3>
+                        <div class="flex items-center justify-between mb-4 flex-row-reverse">
+                            <h3 class="text-lg font-medium text-gray-900">{{ __('common.recent_projects') }}</h3>
                             <Link :href="route('admin.users.index')" class="text-indigo-600 hover:text-indigo-900">
-                                Voir tous
+                                عرض جميع المستخدمين
                             </Link>
                         </div>
                         <div class="overflow-x-auto">
-                            <table class="min-w-full divide-y divide-gray-200">
+                            <table class="min-w-full divide-y divide-gray-200" dir="rtl">
                                 <thead class="bg-gray-50">
                                     <tr>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Nom
+                                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            البريد الإلكتروني
                                         </th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Email
+                                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            الدور
                                         </th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Rôle
-                                        </th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Date d'inscription
+                                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            تاريخ الإنشاء
                                         </th>
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-200">
                                     <tr v-for="user in stats.recent_users" :key="user.id">
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                            {{ user.name }}
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 text-right">
                                             {{ user.email }}
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
+                                        <td class="px-6 py-4 whitespace-nowrap text-right">
                                             <span :class="getRoleBadgeClass(user.role)" class="inline-flex px-2 py-1 text-xs font-semibold rounded-full">
                                                 {{ getRoleLabel(user.role) }}
                                             </span>
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">
                                             {{ formatDate(user.created_at) }}
                                         </td>
                                     </tr>
@@ -116,22 +117,33 @@
                 </div>
             </div>
         </div>
-    </AdminLayout>
+    </AdminLayoutSidebar>
 </template>
 
 <script setup>
 import { Head, Link } from '@inertiajs/vue3';
-import AdminLayout from '@/Layouts/AdminLayout.vue';
+import AdminLayoutSidebar from '@/Layouts/AdminLayoutSidebar.vue';
+import { useTranslations } from '@/Composables/useTranslations';
 
-defineProps({
+const props = defineProps({
     stats: Object,
+    locale: {
+        type: String,
+        default: 'en'
+    },
+    translations: {
+        type: Object,
+        default: () => ({})
+    }
 });
+
+const { __, isRTL, direction } = useTranslations();
 
 const getRoleLabel = (role) => {
     const labels = {
-        'super_admin': 'Super Admin',
-        'admin': 'Admin',
-        'client': 'Client'
+        'super_admin': __('common.super_admin'),
+        'admin': __('common.admin'),
+        'client': __('common.user')
     };
     return labels[role] || role;
 };
@@ -149,4 +161,3 @@ const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString('fr-FR');
 };
 </script>
-
