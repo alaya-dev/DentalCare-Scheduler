@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\UserManagementController;
+use App\Http\Controllers\Client\ProfileController as ClientProfileController;
 use App\Http\Controllers\LanguageController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -20,6 +21,17 @@ use Inertia\Inertia;
 */
 
 Route::get('/', function () {
+    // Redirect only admin and super admin users away from landing page
+    if (auth()->check()) {
+        $user = auth()->user();
+        
+        // Redirect to admin dashboard if user has admin privileges (admin or super_admin)
+        if ($user->hasAdminPrivileges()) {
+            return redirect()->route('admin.dashboard');
+        }
+    }
+    
+    // Show landing page to visitors and clients
     return Inertia::render('Client/Home', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
@@ -36,7 +48,7 @@ Route::get('/dashboard', function () {
         return redirect()->route('admin.dashboard');
     }
 
-    // Rediriger les clients vers l'interface client
+    // Rediriger les clients vers la landing page
     return redirect()->route('client.home');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
@@ -61,17 +73,15 @@ Route::prefix('client')->name('client.')->group(function () {
         return Inertia::render('Client/Pricing');
     })->name('pricing');
 
-    // Authenticated client routes
-    Route::middleware('auth')->group(function () {
-        Route::get('/profile', function () {
-            return Inertia::render('Client/Profile', [
-                'user' => auth()->user(),
-                'stats' => [
-                    'designs_count' => 0,
-                    'orders_count' => 0
-                ]
-            ]);
-        })->name('profile');
+    // Authenticated client routes (clients only)
+    Route::middleware(['auth', 'client'])->group(function () {
+        Route::get('/profile', [ClientProfileController::class, 'show'])->name('profile');
+        Route::patch('/profile', [ClientProfileController::class, 'update'])->name('profile.update');
+        Route::put('/profile/password', [ClientProfileController::class, 'updatePassword'])->name('password.update');
+
+        // Contact routes (clients only)
+        Route::get('/contact', [App\Http\Controllers\Client\ContactController::class, 'index'])->name('contact');
+        Route::post('/contact', [App\Http\Controllers\Client\ContactController::class, 'store'])->name('contact.store');
 
         Route::get('/my-designs', function () {
             return Inertia::render('Client/MyDesigns', [
